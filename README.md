@@ -8,9 +8,6 @@
 
 画素数は320x240で、抵抗膜方式のタッチパネルを使用しています。全抵抗値はX軸430Ω、Y軸350Ω（実測値）です。抵抗膜方式タッチパネルでは以下の手順で入力座標を検知します[^1]。ポーリングレートは240Hz（4.2ms）程度です。プルアップ抵抗はMCUに内蔵されていると考えられ、10kΩはシミュレーション用の値であり正確な値は不明です[^2]。
 
-[^1]: [4-Wire and 8-Wire Resistive Touch-Screen Controller Using the MSP430](https://web.archive.org/web/20140630073208/http://www.ti.com/lit/an/slaa384a/slaa384a.pdf)
-[^2]: ～10kΩ程度ではあるようです。
-
 <table>
 <tr>
 <td>
@@ -73,9 +70,7 @@ Y軸の一方の端を1v8、他方をGNDに設定し、アナログ入力`READ_Y
 | [AD8403ARUZ1](https://www.analog.com/en/products/ad8403.html) | Analog Devices | 全抵抗値1kΩ、4ch、256段階   |
 | [MAX5494](https://www.analog.com/en/products/max5494.html)    | Analog Devices | 全抵抗値10kΩ、2ch、1024段階 |
 
-そこで、1kΩのデジタルポテンショメータを2基あるいは3基連動させて2倍の分解能を得ます[^2]。
-
-[^2]: 『[複数のデバイスによるデジタル・ポテンショメータの分解能の向上](https://www.analog.com/media/jp/technical-documentation/application-notes/an-582_jp.pdf)』（翻訳元：[AN-582 Resolution Enhancements of Digital Potentiometers with Multiple Devices](https://www.analog.com/media/en/technical-documentation/application-notes/an-582.pdf)）
+そこで、1kΩのデジタルポテンショメータを2基あるいは3基連動させて2倍の分解能を得ます[^3]。
 
 資料では①②の方法が紹介されています。①ではスイッチの切り替えによって抵抗値の変化が非線形になり、中央付近を入力できませんでした。また②ではX軸の右端付近を入力することができませんでした。
 
@@ -91,16 +86,22 @@ Y軸の一方の端を1v8、他方をGNDに設定し、アナログ入力`READ_Y
 
 3DSのCスティックは、ひずみゲージを使用しています[^4]。基本的な考え方はスライドパッドのポテンショメータと同様ですが、微弱な抵抗値の変化を入力に変換する点が異なります。以下では、FPCコネクタ実装面から見て左から順にC1～C4とします。
 
-[^4]: [Pointing stick - Wikipedia](https://en.wikipedia.org/wiki/Pointing_stick)
-
 ![](./cstick_1.png)
 
 電流ソース／シンクD/Aコンバータを使用する点もスライドパッドと同じですが、市販のD/Aコンバータの出力電流は過大なので、単電源CMOSオペアンプを使用した増幅回路を構築して電流量を調節します[^5]。(±50 * 39 / 1000)uAのソース／シンクで安定した制御が可能です。
-
-[^5]: 『[電流ソース回路と電流シンク回路の実装と応用](https://www.ti.com/jp/lit/pdf/jaja186)』（翻訳元：[Implementation and Applications of Current Sources and Current Receivers](https://www.ti.com/lit/an/sboa046/sboa046.pdf)）
 
 ![](./cstick_2.png)
 
 操作方向は45度回転しています。オペアンプ回路で反転するので、「C2 Source」とある方向へ傾けるにはC2に接続されたD/Aコンバータを電流シンクに設定してください。
 
 ![](./cstick_3.png)
+
+[^1]: [4-Wire and 8-Wire Resistive Touch-Screen Controller Using the MSP430](https://web.archive.org/web/20140630073208/http://www.ti.com/lit/an/slaa384a/slaa384a.pdf)
+
+[^2]: ～10kΩ程度ではあるようです。
+
+[^3]: 『[複数のデバイスによるデジタル・ポテンショメータの分解能の向上](https://www.analog.com/media/jp/technical-documentation/application-notes/an-582_jp.pdf)』（翻訳元：[AN-582 Resolution Enhancements of Digital Potentiometers with Multiple Devices](https://www.analog.com/media/en/technical-documentation/application-notes/an-582.pdf)）
+
+[^4]: [Pointing stick - Wikipedia](https://en.wikipedia.org/wiki/Pointing_stick)
+
+[^5]: 『[電流ソース回路と電流シンク回路の実装と応用](https://www.ti.com/jp/lit/pdf/jaja186)』（翻訳元：[Implementation and Applications of Current Sources and Current Receivers](https://www.ti.com/lit/an/sboa046/sboa046.pdf)）
