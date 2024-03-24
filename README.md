@@ -73,11 +73,19 @@ Y軸の一方の端を1v8、他方をGNDに設定し、アナログ入力`READ_Y
 | [AD8403ARUZ1](https://www.analog.com/en/products/ad8403.html) | Analog Devices | 全抵抗値1kΩ、4ch、256段階   |
 | [MAX5494](https://www.analog.com/en/products/max5494.html)    | Analog Devices | 全抵抗値10kΩ、2ch、1024段階 |
 
-1kΩのデジタルポテンショメータを2基あるいは3基連動させて2倍の分解能を得る方法で、ある程度解決できます[^3]。ただし、2基を使用する方法ではワイパーの切り替えによって抵抗値が非線形になり、中央を入力できない問題があります。3基を使用する方法は、現行のQingpiの方式ですが、端子とワイパーの抵抗を無視できなくなりX軸の端を入力できません。
+そこで、1kΩのデジタルポテンショメータを2基あるいは3基連動させて2倍の分解能を得ます[^2]。
 
-[^3]: [AN-582 Resolution Enhancements of Digital Potentiometers with Multiple Devices](https://www.analog.com/media/en/technical-documentation/application-notes/an-582.pdf)
+[^2]: 『[複数のデバイスによるデジタル・ポテンショメータの分解能の向上](https://www.analog.com/media/jp/technical-documentation/application-notes/an-582_jp.pdf)』（翻訳元：[AN-582 Resolution Enhancements of Digital Potentiometers with Multiple Devices](https://www.analog.com/media/en/technical-documentation/application-notes/an-582.pdf)）
+
+資料では①②の方法が紹介されています。①ではスイッチの切り替えによって抵抗値の変化が非線形になり、中央付近を入力できませんでした。また②ではX軸の右端付近を入力することができませんでした。
+
+そこで③の方法を考えます。`0 <= D && D <= 255`では上下のポテンショメータを0（上端）に固定し右のポテンショメータをこの値に設定します。`256 <= D && D <= 510`では右のポテンショメータは255（下端）に固定し上下のポテンショメータを`D - 255`に設定します。この回路は全体として、全抵抗値2kΩ、511段階のポテンショメータとして振る舞います。
 
 ![](./touchscreen_6.png)
+
+加えて、AD8403は5Vで駆動することで、3Vで駆動させる場合と比較してワイパー抵抗値を4分の1程度に抑えることができます。以上の対策を施し、タッチスクリーンのほぼ全範囲を入力することが可能になります。
+
+![](./touchscreen_7.png)
 
 ## Cスティック
 
